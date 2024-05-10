@@ -32,7 +32,8 @@ function getMatches(str, regex) {
 export default class ContentDecorator {
     constructor(match, decoratorFn) {
         if (typeof match === 'string')
-            this.match = new RegExp(`{\s*${match.trim()}\s*(,.+?)?\s*?}`, 'gmi');
+            // this.match = new RegExp(`{\s*${match.trim()}\s*(,.+?)?\s*?}`, 'gmi'); // PJS
+            this.match = new RegExp(`{[ \t]*${match.trim()}[ \t]*(,.+?)?[ \t]*?}`, 'gmi');
         else this.match = match;
         this.decoratorFn = decoratorFn;
     }

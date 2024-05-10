@@ -73,12 +73,21 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 1001;
   background-color: $overlay;
 
   &.active {
     display: block;
   }
+}
+
+.guided-tour-catch-click {
+	z-index: 1000;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 // .guided-tour-target {
@@ -102,13 +111,13 @@ button {
       box-sizing: border-box;
       border-radius: 4px;
       box-shadow: 0 0 0 999em $overlay;
-      z-index: 1;
+      z-index: 1001;
     }
 
     .guided-tour-step-tooltip {
       position: absolute;
       margin: 16px 0;
-      z-index: 2;
+      z-index: 1002;
       background-color: $background;
       // min-width: 280px;
       width: $tooltipMinWidth;

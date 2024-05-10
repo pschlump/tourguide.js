@@ -1,0 +1,323 @@
+Style=:host {
+  position: absolute;
+  overflow: visible;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  box-sizing: border-box;
+  line-height: 1.4;
+  text-align: left;
+  text-rendering: optimizespeed;
+  font-family: var(--tourguide-font-family);
+  font-size: var(--tourguide-font-size);
+  color: var(--tourguide-text-color);
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  tab-size: 4;
+  /* 3 */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-width: 0;
+  border-style: none;
+  border-color: currentColor;
+  box-shadow: none;
+  color: inherit;
+  appearance: none;
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+a:hover, a:focus,
+button:hover,
+button:focus {
+  outline: 5px auto var(--tourguide-focus-color);
+}
+
+.guided-tour-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: var(--tourguide-overlay-color);
+}
+.guided-tour-overlay.active {
+  display: block;
+}
+
+.guided-tour-step {
+  display: none;
+}
+.guided-tour-step.active {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+}
+.guided-tour-step.active .guided-tour-step-highlight {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 0 0 999em var(--tourguide-overlay-color);
+  z-index: 1;
+}
+.guided-tour-step.active .guided-tour-step-tooltip {
+  position: absolute;
+  margin: 16px 0;
+  z-index: 2;
+  background-color: var(--tourguide-background-color);
+  width: var(--tourguide-tooltip-width);
+  max-width: max-content;
+  border-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 0 3em -0.8em #000;
+  transition: opacity 150ms;
+}
+@media screen and (max-width: 760px) {
+  .guided-tour-step.active .guided-tour-step-tooltip {
+    max-width: 85vw;
+    width: max-content !important;
+  }
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  background: var(--tourguide-background-color);
+  z-index: -1;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: calc(100% - 2.6em);
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px 4px 0 0;
+  object-fit: cover;
+  object-position: center;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-wrapper {
+  margin: 1.5em 2.5em;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-title {
+  font-size: 1.4em;
+  margin-bottom: 0.8em;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content {
+  flex-shrink: 0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content b,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content strong {
+  font-weight: bold;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content i,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content em {
+  font-style: italic;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content a {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--tourguide-accent-color);
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content mark {
+  background: inherit;
+  text-shadow: 0px 2px 4px #ff0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {
+  padding: 1px 6px 1px 4px;
+  border-radius: 4px;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code {
+  background-color: #f0f0f0;
+  color: #e83e8c;
+  font-family: monospace;
+  font-size: 87.5%;
+  word-break: break-word;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {
+  font-style: italic;
+  background-color: #ffc6e5;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {
+  margin: 1em 0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p:last-child,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul:last-child,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol:last-child,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote:last-child {
+  margin-bottom: 0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {
+  padding-left: 1em;
+  border-left: 4px solid silver;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol {
+  padding-left: 1.5em;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul li,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol li {
+  margin: 0.3em 0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions {
+  display: flex;
+  column-gap: 0.5em;
+  margin-top: 1.5em;
+  justify-content: end;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button {
+  color: var(--tourguide-accent-color);
+  padding: 0.5em 1em;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary {
+  background: var(--tourguide-accent-color);
+  padding: 0.5em 1.5em;
+  color: #fff;
+  border-radius: 4px;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:hover, .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:focus {
+  filter: brightness(120%);
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-icon {
+  display: inline-block;
+  overflow: hidden;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button {
+  flex-direction: column;
+  justify-content: center;
+  /* <-- actual veertical align */
+  display: inline-flex;
+  text-align: center;
+  cursor: pointer;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button .guided-tour-icon {
+  align-self: center;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2em;
+  height: 2em;
+  color: var(--tourguide-step-button-close-color);
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next,
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {
+  width: 3em;
+  height: 3em;
+  background: var(--tourguide-background-color);
+  border-radius: 50%;
+  margin-top: -1.5em;
+  position: absolute;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev {
+  color: var(--tourguide-step-button-prev-color);
+  left: 0;
+  transform: translateX(-50%);
+  top: 50%;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next {
+  color: var(--tourguide-step-button-next-color);
+  right: 0;
+  transform: translateX(50%);
+  top: 50%;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {
+  color: var(--tourguide-step-button-complete-color);
+  right: 0;
+  transform: translateX(50%);
+  top: 50%;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-footer {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets {
+  text-align: center;
+  line-height: 16px;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul {
+  list-style: none;
+  margin: 0 1em 1em;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li {
+  display: inline-block;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: var(--tourguide-bullet-color);
+  border: 8px solid var(--tourguide-background-color);
+  box-sizing: content-box;
+  cursor: pointer;
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.complete {
+  background-color: var(--tourguide-bullet-visited-color);
+}
+.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.current {
+  background-color: var(--tourguide-bullet-current-color);
+}
+@media screen and (min-width: 760px) {
+  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container {
+    flex-direction: row;
+    height: 100%;
+  }
+  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-content-wrapper {
+    flex: 1 1 auto;
+  }
+  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image {
+    width: 50%;
+    margin-bottom: calc((1em + 24px) * -1);
+    flex: 0 0 auto;
+  }
+  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image img {
+    border-radius: 4px 0 0 4px;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-none .guided-tour-step-tooltip-inner .guided-tour-arrow {
+  display: none;
+}

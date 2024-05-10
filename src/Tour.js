@@ -37,7 +37,7 @@ const defaultStyle = {
   fontSize: "14px",
   tooltipWidth: "40vw",
 
-  overlayColor: "rgba(0, 0, 0, 0.5)",
+  overlayColor: "rgba(0, 0, 0, 0.2)",
   textColor: "#333",
   accentColor: "#0d6efd",
 

@@ -1,6 +1,6 @@
 export default class ActionHandler {
-    constructor(name, handlerFn) {
-        this.name = name;
-        this.onAction = handlerFn;
-    }
+	constructor(name, handlerFn) {
+		this.name = name;
+		this.onAction = handlerFn;
+	}
 }

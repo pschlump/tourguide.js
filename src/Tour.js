@@ -179,8 +179,8 @@ export default class Tour {
 		let w = window.innerWidth-1;
 		let h = window.innerHeight-1;
 
-		this._overlayElement = document.createElement("div");
-		this._overlayElement.classList.add("guided-tour-catch-click");		// xyzzy
+		this._overlayElement = document.createElement("div");				// PJS
+		this._overlayElement.classList.add("guided-tour-catch-click");	
 		this._overlayElement.style = `height:${h}px; width:${w}px;`
 		u(this._shadowRoot).append(this._overlayElement);
 
@@ -201,7 +201,6 @@ export default class Tour {
 	_injectStyles() {
 		// const global = u("<style>.__guided-tour-active{position:relative!important}</style>");
 		// u(":root > head").append(global);
-		console.log ( `Style=${Style}` );
 		const style = u(
 			`<style>${Style}</style>`
 		);
@@ -322,9 +321,7 @@ export default class Tour {
 					if (handler) handler.onAction(event, action, this);
 				}
 			}
-			if (
-				typeof this._options.onAction === "function"
-			) {
+			if ( typeof this._options.onAction === "function") {
 				this._options.onAction(event, action, this);
 			}
 		}
@@ -352,7 +349,7 @@ export default class Tour {
 			this.currentstep.hide();
 			this._active = false;
 			this._overlay.remove();
-			this._overlayElement.remove(); 									// xyzzy - PJS remove??
+			this._overlayElement.remove(); 									// PJS remove overlay div
 			this._steps.forEach((step) => step.remove());
 			u(this._options.root).removeClass("__guided-tour-active");
 			if (this._options.keyboardNavigation) {

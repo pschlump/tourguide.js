@@ -1,5 +1,9 @@
+
 import u from "umbrellajs";
-import scrollIntoView from "scroll-into-view";
+
+// import scrollIntoView from "scroll-into-view";
+import scrollIntoView from "../scrollintoview";
+
 import {
 	clamp,
 	getDataContents,
@@ -155,6 +159,7 @@ export default class Step {
 			} else tooltipinner.append(arrow).append(container);
 			tooltip.append(tooltipinner);
 			this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
+			// xyzzy - this point
 			if (this.overlay && isTargetValid(this.target)) {
 				const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
 				this.container.append(highlight).append(tooltip);
@@ -299,6 +304,7 @@ export default class Step {
 				});
 			};
 			const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
+			console.error ( "Before isTargetValid", this.target );
 			if (isTargetValid(this.target)) {
 				this._scrollCancel = scrollIntoView(this.target, {
 					time: animationspeed,

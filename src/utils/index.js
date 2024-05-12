@@ -36,6 +36,7 @@ export function getDataContents(data = "", defaults = {}) {
 }
 
 export function isTargetValid(target) {
+	console.error ( "isTargetValid", target, target.offsetParent, "return=", ( target && target.offsetParent !== null ) );
 	return target && target.offsetParent !== null;
 }
 

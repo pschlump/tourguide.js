@@ -59,9 +59,9 @@
     "rollup-plugin-sizes": "^0.4.2",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.49.0",
-    "scroll-into-view": "^1.15.0",
+    "scroll-into-view": "^1.16.2",
     "snarkdown": "^2.0.0",
-    "umbrellajs": "^3.1.0"
+    "umbrellajs": "^3.3.3"
   },
   "commonjs": [
     "node_modules/**"

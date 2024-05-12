@@ -21,280 +21,233 @@
 <symbol id="tour-icon-complete" viewBox="0 0 20 20"><polyline points="4,10 8,15 17,4" fill="none" stroke="currentColor" stroke-width="1"></polyline></symbol>
 </svg>`;
 
+    // Pulled from: /Users/philip/go/src/github.com/pschlump/scroll-into-view/scrollIntoView.js
+
     var COMPLETE = 'complete',
-        CANCELED = 'canceled';
-
-    function raf(task){
-        if('requestAnimationFrame' in window){
-            return window.requestAnimationFrame(task);
-        }
-
-        setTimeout(task, 16);
+      CANCELED = 'canceled';
+    function raf(task) {
+      if ('requestAnimationFrame' in window) {
+        return window.requestAnimationFrame(task);
+      }
+      setTimeout(task, 16);
     }
-
-    function setElementScroll$1(element, x, y){
-
-        if(element.self === element){
-            element.scrollTo(x, y);
-        }else {
-            element.scrollLeft = x;
-            element.scrollTop = y;
-        }
+    function setElementScroll$1(element, x, y) {
+      if (element.self === element) {
+        element.scrollTo(x, y);
+      } else {
+        element.scrollLeft = x;
+        element.scrollTop = y;
+      }
     }
-
-    function getTargetScrollLocation(scrollSettings, parent){
-        var align = scrollSettings.align,
-            target = scrollSettings.target,
-            targetPosition = target.getBoundingClientRect(),
-            parentPosition,
-            x,
-            y,
-            differenceX,
-            differenceY,
-            targetWidth,
-            targetHeight,
-            leftAlign = align && align.left != null ? align.left : 0.5,
-            topAlign = align && align.top != null ? align.top : 0.5,
-            leftOffset = align && align.leftOffset != null ? align.leftOffset : 0,
-            topOffset = align && align.topOffset != null ? align.topOffset : 0,
-            leftScalar = leftAlign,
-            topScalar = topAlign;
-
-        if(scrollSettings.isWindow(parent)){
-            targetWidth = Math.min(targetPosition.width, parent.innerWidth);
-            targetHeight = Math.min(targetPosition.height, parent.innerHeight);
-            x = targetPosition.left + parent.pageXOffset - parent.innerWidth * leftScalar + targetWidth * leftScalar;
-            y = targetPosition.top + parent.pageYOffset - parent.innerHeight * topScalar + targetHeight * topScalar;
-            x -= leftOffset;
-            y -= topOffset;
-            x = scrollSettings.align.lockX ? parent.pageXOffset : x;
-            y = scrollSettings.align.lockY ? parent.pageYOffset : y;
-            differenceX = x - parent.pageXOffset;
-            differenceY = y - parent.pageYOffset;
-        }else {
-            targetWidth = targetPosition.width;
-            targetHeight = targetPosition.height;
-            parentPosition = parent.getBoundingClientRect();
-            var offsetLeft = targetPosition.left - (parentPosition.left - parent.scrollLeft);
-            var offsetTop = targetPosition.top - (parentPosition.top - parent.scrollTop);
-            x = offsetLeft + (targetWidth * leftScalar) - parent.clientWidth * leftScalar;
-            y = offsetTop + (targetHeight * topScalar) - parent.clientHeight * topScalar;
-            x -= leftOffset;
-            y -= topOffset;
-            x = Math.max(Math.min(x, parent.scrollWidth - parent.clientWidth), 0);
-            y = Math.max(Math.min(y, parent.scrollHeight - parent.clientHeight), 0);
-            x = scrollSettings.align.lockX ? parent.scrollLeft : x;
-            y = scrollSettings.align.lockY ? parent.scrollTop : y;
-            differenceX = x - parent.scrollLeft;
-            differenceY = y - parent.scrollTop;
-        }
-
-        return {
-            x: x,
-            y: y,
-            differenceX: differenceX,
-            differenceY: differenceY
+    function getTargetScrollLocation(scrollSettings, parent) {
+      var align = scrollSettings.align,
+        target = scrollSettings.target,
+        targetPosition = target.getBoundingClientRect(),
+        parentPosition,
+        x,
+        y,
+        differenceX,
+        differenceY,
+        targetWidth,
+        targetHeight,
+        leftAlign = align && align.left != null ? align.left : 0.5,
+        topAlign = align && align.top != null ? align.top : 0.5,
+        leftOffset = align && align.leftOffset != null ? align.leftOffset : 0,
+        topOffset = align && align.topOffset != null ? align.topOffset : 0,
+        leftScalar = leftAlign,
+        topScalar = topAlign;
+      if (scrollSettings.isWindow(parent)) {
+        targetWidth = Math.min(targetPosition.width, parent.innerWidth);
+        targetHeight = Math.min(targetPosition.height, parent.innerHeight);
+        x = targetPosition.left + parent.pageXOffset - parent.innerWidth * leftScalar + targetWidth * leftScalar;
+        y = targetPosition.top + parent.pageYOffset - parent.innerHeight * topScalar + targetHeight * topScalar;
+        x -= leftOffset;
+        y -= topOffset;
+        x = scrollSettings.align.lockX ? parent.pageXOffset : x;
+        y = scrollSettings.align.lockY ? parent.pageYOffset : y;
+        differenceX = x - parent.pageXOffset;
+        differenceY = y - parent.pageYOffset;
+      } else {
+        targetWidth = targetPosition.width;
+        targetHeight = targetPosition.height;
+        parentPosition = parent.getBoundingClientRect();
+        var offsetLeft = targetPosition.left - (parentPosition.left - parent.scrollLeft);
+        var offsetTop = targetPosition.top - (parentPosition.top - parent.scrollTop);
+        x = offsetLeft + targetWidth * leftScalar - parent.clientWidth * leftScalar;
+        y = offsetTop + targetHeight * topScalar - parent.clientHeight * topScalar;
+        x -= leftOffset;
+        y -= topOffset;
+        x = Math.max(Math.min(x, parent.scrollWidth - parent.clientWidth), 0);
+        y = Math.max(Math.min(y, parent.scrollHeight - parent.clientHeight), 0);
+        x = scrollSettings.align.lockX ? parent.scrollLeft : x;
+        y = scrollSettings.align.lockY ? parent.scrollTop : y;
+        differenceX = x - parent.scrollLeft;
+        differenceY = y - parent.scrollTop;
+      }
+      return {
+        x: x,
+        y: y,
+        differenceX: differenceX,
+        differenceY: differenceY
+      };
+    }
+    function animate(parent) {
+      var scrollSettings = parent._scrollSettings;
+      if (!scrollSettings) {
+        return;
+      }
+      var maxSynchronousAlignments = scrollSettings.maxSynchronousAlignments;
+      var location = getTargetScrollLocation(scrollSettings, parent),
+        time = Date.now() - scrollSettings.startTime,
+        timeValue = Math.min(1 / scrollSettings.time * time, 1);
+      if (scrollSettings.endIterations >= maxSynchronousAlignments) {
+        setElementScroll$1(parent, location.x, location.y);
+        parent._scrollSettings = null;
+        return scrollSettings.end(COMPLETE);
+      }
+      var easeValue = 1 - scrollSettings.ease(timeValue);
+      setElementScroll$1(parent, location.x - location.differenceX * easeValue, location.y - location.differenceY * easeValue);
+      if (time >= scrollSettings.time) {
+        scrollSettings.endIterations++;
+        // Align ancestor synchronously
+        scrollSettings.scrollAncestor && animate(scrollSettings.scrollAncestor);
+        animate(parent);
+        return;
+      }
+      raf(animate.bind(null, parent));
+    }
+    function defaultIsWindow(target) {
+      return target.self === target;
+    }
+    function transitionScrollTo(target, parent, settings, scrollAncestor, callback) {
+      var idle = !parent._scrollSettings,
+        lastSettings = parent._scrollSettings,
+        now = Date.now(),
+        cancelHandler,
+        passiveOptions = {
+          passive: true
         };
+      if (lastSettings) {
+        lastSettings.end(CANCELED);
+      }
+      function end(endType) {
+        parent._scrollSettings = null;
+        if (parent.parentElement && parent.parentElement._scrollSettings) {
+          parent.parentElement._scrollSettings.end(endType);
+        }
+        if (settings.debug) {
+          console.log('Scrolling ended with type', endType, 'for', parent);
+        }
+        callback(endType);
+        if (cancelHandler) {
+          parent.removeEventListener('touchstart', cancelHandler, passiveOptions);
+          parent.removeEventListener('wheel', cancelHandler, passiveOptions);
+        }
+      }
+      var maxSynchronousAlignments = settings.maxSynchronousAlignments;
+      if (maxSynchronousAlignments == null) {
+        maxSynchronousAlignments = 3;
+      }
+      parent._scrollSettings = {
+        startTime: now,
+        endIterations: 0,
+        target: target,
+        time: settings.time,
+        ease: settings.ease,
+        align: settings.align,
+        isWindow: settings.isWindow || defaultIsWindow,
+        maxSynchronousAlignments: maxSynchronousAlignments,
+        end: end,
+        scrollAncestor
+      };
+      if (!('cancellable' in settings) || settings.cancellable) {
+        cancelHandler = end.bind(null, CANCELED);
+        parent.addEventListener('touchstart', cancelHandler, passiveOptions);
+        parent.addEventListener('wheel', cancelHandler, passiveOptions);
+      }
+      if (idle) {
+        animate(parent);
+      }
+      return cancelHandler;
+    }
+    function defaultIsScrollable(element) {
+      return 'pageXOffset' in element || (element.scrollHeight !== element.clientHeight || element.scrollWidth !== element.clientWidth) && getComputedStyle(element).overflow !== 'hidden';
+    }
+    function defaultValidTarget() {
+      return true;
+    }
+    function findParentElement(el) {
+      if (el.assignedSlot) {
+        return findParentElement(el.assignedSlot);
+      }
+      if (el.parentElement) {
+        if (el.parentElement.tagName.toLowerCase() === 'body') {
+          return el.parentElement.ownerDocument.defaultView || el.parentElement.ownerDocument.ownerWindow;
+        }
+        return el.parentElement;
+      }
+      if (el.getRootNode) {
+        var parent = el.getRootNode();
+        if (parent.nodeType === 11) {
+          // Node.DOCUMENT_FRAGMENT_NODE (11), see: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+          return parent.host;
+        }
+      }
     }
 
-    function animate(parent){
-        var scrollSettings = parent._scrollSettings;
-
-        if(!scrollSettings){
-            return;
+    // import scrollIntoView from "scroll-into-view";
+    // module.exports = function(target, settings, callback) {
+    function scrollIntoView(target, settings, callback) {
+      if (!target) {
+        console.error("target not defined, early return!!!!!");
+        return;
+      }
+      console.error("target=", target);
+      if (typeof settings === 'function') {
+        callback = settings;
+        settings = null;
+      }
+      if (!settings) {
+        settings = {};
+      }
+      settings.time = isNaN(settings.time) ? 1000 : settings.time;
+      settings.ease = settings.ease || function (v) {
+        return 1 - Math.pow(1 - v, v / 2);
+      };
+      settings.align = settings.align || {};
+      var parent = findParentElement(target),
+        parents = 1;
+      function done(endType) {
+        parents--;
+        if (!parents) {
+          callback && callback(endType);
         }
-
-        var maxSynchronousAlignments = scrollSettings.maxSynchronousAlignments;
-
-        var location = getTargetScrollLocation(scrollSettings, parent),
-            time = Date.now() - scrollSettings.startTime,
-            timeValue = Math.min(1 / scrollSettings.time * time, 1);
-
-        if(scrollSettings.endIterations >= maxSynchronousAlignments){
-            setElementScroll$1(parent, location.x, location.y);
-            parent._scrollSettings = null;
-            return scrollSettings.end(COMPLETE);
+      }
+      var validTarget = settings.validTarget || defaultValidTarget;
+      var isScrollable = settings.isScrollable;
+      if (settings.debug) {
+        console.log('About to scroll to', target);
+        if (!parent) {
+          console.error('Target did not have a parent, is it mounted in the DOM?');
         }
-
-        var easeValue = 1 - scrollSettings.ease(timeValue);
-
-        setElementScroll$1(parent,
-            location.x - location.differenceX * easeValue,
-            location.y - location.differenceY * easeValue
-        );
-
-        if(time >= scrollSettings.time){
-            scrollSettings.endIterations++;
-            // Align ancestor synchronously
-            scrollSettings.scrollAncestor && animate(scrollSettings.scrollAncestor);
-            animate(parent);
-            return;
+      }
+      var scrollingElements = [];
+      while (parent) {
+        if (settings.debug) {
+          console.log('Scrolling parent node', parent);
         }
-
-        raf(animate.bind(null, parent));
+        if (validTarget(parent, parents) && (isScrollable ? isScrollable(parent, defaultIsScrollable) : defaultIsScrollable(parent))) {
+          parents++;
+          scrollingElements.push(parent);
+        }
+        parent = findParentElement(parent);
+        if (!parent) {
+          done(COMPLETE);
+          break;
+        }
+      }
+      return scrollingElements.reduce((cancel, parent, index) => transitionScrollTo(target, parent, settings, scrollingElements[index + 1], done), null);
     }
-
-    function defaultIsWindow(target){
-        return target.self === target
-    }
-
-    function transitionScrollTo(target, parent, settings, scrollAncestor, callback){
-        var idle = !parent._scrollSettings,
-            lastSettings = parent._scrollSettings,
-            now = Date.now(),
-            cancelHandler,
-            passiveOptions = { passive: true };
-
-        if(lastSettings){
-            lastSettings.end(CANCELED);
-        }
-
-        function end(endType){
-            parent._scrollSettings = null;
-
-            if(parent.parentElement && parent.parentElement._scrollSettings){
-                parent.parentElement._scrollSettings.end(endType);
-            }
-
-            if(settings.debug){
-                console.log('Scrolling ended with type', endType, 'for', parent);
-            }
-
-            callback(endType);
-            if(cancelHandler){
-                parent.removeEventListener('touchstart', cancelHandler, passiveOptions);
-                parent.removeEventListener('wheel', cancelHandler, passiveOptions);
-            }
-        }
-
-        var maxSynchronousAlignments = settings.maxSynchronousAlignments;
-
-        if(maxSynchronousAlignments == null){
-            maxSynchronousAlignments = 3;
-        }
-
-        parent._scrollSettings = {
-            startTime: now,
-            endIterations: 0,
-            target: target,
-            time: settings.time,
-            ease: settings.ease,
-            align: settings.align,
-            isWindow: settings.isWindow || defaultIsWindow,
-            maxSynchronousAlignments: maxSynchronousAlignments,
-            end: end,
-            scrollAncestor
-        };
-
-        if(!('cancellable' in settings) || settings.cancellable){
-            cancelHandler = end.bind(null, CANCELED);
-            parent.addEventListener('touchstart', cancelHandler, passiveOptions);
-            parent.addEventListener('wheel', cancelHandler, passiveOptions);
-        }
-
-        if(idle){
-            animate(parent);
-        }
-
-        return cancelHandler
-    }
-
-    function defaultIsScrollable(element){
-        return (
-            'pageXOffset' in element ||
-            (
-                element.scrollHeight !== element.clientHeight ||
-                element.scrollWidth !== element.clientWidth
-            ) &&
-            getComputedStyle(element).overflow !== 'hidden'
-        );
-    }
-
-    function defaultValidTarget(){
-        return true;
-    }
-
-    function findParentElement(el){
-        if (el.assignedSlot) {
-            return findParentElement(el.assignedSlot);
-        }
-
-        if (el.parentElement) {
-            if(el.parentElement.tagName.toLowerCase() === 'body'){
-                return el.parentElement.ownerDocument.defaultView || el.parentElement.ownerDocument.ownerWindow;
-            }
-            return el.parentElement;
-        }
-
-        if (el.getRootNode){
-            var parent = el.getRootNode();
-            if(parent.nodeType === 11) {
-                return parent.host;
-            }
-        }
-    }
-
-    var scrollIntoView = function(target, settings, callback){
-        if(!target){
-            return;
-        }
-
-        if(typeof settings === 'function'){
-            callback = settings;
-            settings = null;
-        }
-
-        if(!settings){
-            settings = {};
-        }
-
-        settings.time = isNaN(settings.time) ? 1000 : settings.time;
-        settings.ease = settings.ease || function(v){return 1 - Math.pow(1 - v, v / 2);};
-        settings.align = settings.align || {};
-
-        var parent = findParentElement(target),
-            parents = 1;
-
-        function done(endType){
-            parents--;
-            if(!parents){
-                callback && callback(endType);
-            }
-        }
-
-        var validTarget = settings.validTarget || defaultValidTarget;
-        var isScrollable = settings.isScrollable;
-
-        if(settings.debug){
-            console.log('About to scroll to', target);
-
-            if(!parent){
-                console.error('Target did not have a parent, is it mounted in the DOM?');
-            }
-        }
-
-        var scrollingElements = [];
-
-        while(parent){
-            if(settings.debug){
-                console.log('Scrolling parent node', parent);
-            }
-
-            if(validTarget(parent, parents) && (isScrollable ? isScrollable(parent, defaultIsScrollable) : defaultIsScrollable(parent))){
-                parents++;
-                scrollingElements.push(parent);
-            }
-
-            parent = findParentElement(parent);
-
-            if(!parent){
-                done(COMPLETE);
-                break;
-            }
-        }
-
-        return scrollingElements.reduce((cancel, parent, index) => transitionScrollTo(target, parent, settings, scrollingElements[index + 1], done), null);
-    };
 
     function assert(assertion, message) {
       if (!assertion) throw `TourguideJS: ${message}`;
@@ -320,6 +273,7 @@
       return result;
     }
     function isTargetValid(target) {
+      console.error("isTargetValid", target, target.offsetParent, "return=", target && target.offsetParent !== null);
       return target && target.offsetParent !== null;
     }
 
@@ -385,8 +339,8 @@
      * @param {string} [selector] target css selector. default: ":root"
      * @returns {string} converted string
      * @example
-     *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
-     *  output: ":root { --tourguide-overlay: gray; --tourguide-background: white; --tourguide-bullet-current: red; }"
+     *	input: { overlay: "gray", background: "white", bulletCurrent: "red" }
+     *	output: ":root { --tourguide-overlay: gray; --tourguide-background: white; --tourguide-bullet-current: red; }"
      */
     function colorObjToStyleVarString(colors) {
       let prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "--tourguide";
@@ -2477,6 +2431,7 @@
           } else tooltipinner.append(arrow).append(container);
           tooltip.append(tooltipinner);
           this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
+          // xyzzy - this point
           if (this.overlay && isTargetValid(this.target)) {
             const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
             this.container.append(highlight).append(tooltip);
@@ -2599,6 +2554,7 @@
             });
           };
           const animationspeed = clamp$1(this.context.options.animationspeed, 120, 1000);
+          console.error("Before isTargetValid", this.target);
           if (isTargetValid(this.target)) {
             this._scrollCancel = scrollIntoView(this.target, {
               time: animationspeed,
@@ -2966,8 +2922,8 @@
         this._injectStyles();
         let w = window.innerWidth - 1;
         let h = window.innerHeight - 1;
-        this._overlayElement = document.createElement("div");
-        this._overlayElement.classList.add("guided-tour-catch-click"); // xyzzy
+        this._overlayElement = document.createElement("div"); // PJS
+        this._overlayElement.classList.add("guided-tour-catch-click");
         this._overlayElement.style = `height:${h}px; width:${w}px;`;
         u(this._shadowRoot).append(this._overlayElement);
         this.start = this.start.bind(this);
@@ -2987,7 +2943,6 @@
       _injectStyles() {
         // const global = u("<style>.__guided-tour-active{position:relative!important}</style>");
         // u(":root > head").append(global);
-        console.log(`Style=${Style}`);
         const style = u(`<style>${Style}</style>`);
         u(this._shadowRoot).append(style);
         const colors = u(`<style>${colorObjToStyleVarString(this._options.style, "--tourguide")}</style>`);
@@ -3112,7 +3067,7 @@
           this.currentstep.hide();
           this._active = false;
           this._overlay.remove();
-          this._overlayElement.remove(); // xyzzy - PJS remove??
+          this._overlayElement.remove(); // PJS remove overlay div
           this._steps.forEach(step => step.remove());
           u(this._options.root).removeClass("__guided-tour-active");
           if (this._options.keyboardNavigation) {

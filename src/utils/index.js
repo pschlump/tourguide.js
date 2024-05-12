@@ -35,9 +35,23 @@ export function getDataContents(data = "", defaults = {}) {
 	return result;
 }
 
+// PJS console.log ( "\n%cWe Are Hiring", 'background: #111; color:#ff40ff; padding:15px; font-size: 28px;' );
 export function isTargetValid(target) {
-	console.error ( "isTargetValid", target, target.offsetParent, "return=", ( target && target.offsetParent !== null ) );
+	// xyzzy - Error - if "fixed" has no target.offsetParent!!!!
+	// ---- See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent, if "fixed" then offsetParnet is null.
+	// console.log ( "%cno .offsetParent", "background: red; color: blue;" );
+	// console.error ( "!!important!!, should return true!!!!!        isTargetValid, target=", target, "target.offsetParent=", target.offsetParent, " ( target && target.offsetParent !== null) return=", ( target && target.offsetParent !== null ) );
 	return target && target.offsetParent !== null;
+}
+
+// PJS new xyzzy100
+export function isTargetFixedPosition(target) {
+	return target && target.offsetParent === null;
+}
+
+// PJS new xyzzy100
+export function isTargetVisible(target) {
+	return target && target.checkVisibility()
 }
 
 /**

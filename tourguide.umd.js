@@ -272,9 +272,24 @@
       });
       return result;
     }
+
+    // PJS console.log ( "\n%cWe Are Hiring", 'background: #111; color:#ff40ff; padding:15px; font-size: 28px;' );
     function isTargetValid(target) {
-      console.error("isTargetValid", target, target.offsetParent, "return=", target && target.offsetParent !== null);
+      // xyzzy - Error - if "fixed" has no target.offsetParent!!!!
+      // ---- See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent, if "fixed" then offsetParnet is null.
+      // console.log ( "%cno .offsetParent", "background: red; color: blue;" );
+      // console.error ( "!!important!!, should return true!!!!!        isTargetValid, target=", target, "target.offsetParent=", target.offsetParent, " ( target && target.offsetParent !== null) return=", ( target && target.offsetParent !== null ) );
       return target && target.offsetParent !== null;
+    }
+
+    // PJS new xyzzy100
+    function isTargetFixedPosition(target) {
+      return target && target.offsetParent === null;
+    }
+
+    // PJS new xyzzy100
+    function isTargetVisible(target) {
+      return target && target.checkVisibility();
     }
 
     /**
@@ -2431,21 +2446,32 @@
           } else tooltipinner.append(arrow).append(container);
           tooltip.append(tooltipinner);
           this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
-          // xyzzy - this point
-          if (this.overlay && isTargetValid(this.target)) {
+          // console.warn ( "this.target = ", this.target );
+          // xyzzy100 - this point - if fixed and visible, then ... do it...
+          // export function isTargetFixedPosition(target) {
+          // export function isTargetVisible(target) {
+          if (this.overlay && isTargetFixedPosition(this.target) && isTargetVisible(this.target)) {
+            const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
+            this.container.append(highlight).append(tooltip);
+          } else if (this.overlay && isTargetValid(this.target)) {
             const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
             this.container.append(highlight).append(tooltip);
           } else this.container.append(tooltip);
         }
+        // console.warn ( "return this.container from 'get el', ", this.container);
         return this.container;
       }
       get target() {
+        // I think the error is at this piont, this._selector = '#driver-footer', u()... is NULL, no find.
+        // console.warn ( ">>>>>>  in get target(), this._selector = ", this._selector, " u(...)=", u(this._selector), " .first()=", u(this._selector).first() );
         return this._target || this._selector && u(this._selector).first();
       }
       set target(target) {
+        // console.warn ( "set of target to, ", target );
         this._target = target;
       }
       constructor(step, context) {
+        // console.warn ( "step = ", step );
         this.active = false;
         this.first = false;
         this.last = false;
@@ -2462,6 +2488,7 @@
           data = step;
           this._selector = step.selector;
         } else {
+          // console.error ( " !!!!!!!!!!!!!!!!!!!!!!!! seting of this.target = step !!!!!!!!!!!!!!!!!! Before set of target", step );
           this.target = step;
           data = getDataContents(u(step).data("tour"));
         }
@@ -2473,6 +2500,10 @@
         this.image = data.image;
         this.width = data.width;
         this.height = data.height;
+        this.udata = {}; // add user data, udata
+        if (data.hasOwnProperty("udata")) {
+          this.udata = data.udata;
+        }
         this.layout = data.layout || "vertical";
         this.placement = data.placement || "bottom";
         this.overlay = data.overlay !== false;
@@ -2498,6 +2529,7 @@
         // this.adjust = this.adjust.bind(this);
       }
       attach(root) {
+        // console.warn ( "in attach() before this.el, error may already have occured.   this.target=", this.target);
         u(root).append(this.el);
       }
       remove() {
@@ -2514,7 +2546,21 @@
           width: 0,
           height: 0
         };
-        if (isTargetValid(this.target)) {
+
+        // xyzzy100 - 
+        if (isTargetFixedPosition(this.target) && isTargetVisible(this.target)) {
+          if (this.overlay && this.highlight) {
+            // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+            // offsetParent is useful because offsetTop and offsetLeft are relative to its padding edge., so take a guess at padding size...
+            const targetRect = getBoundingClientRect$1(this.target, this.context._options.root);
+            highlightStyle.top = `${targetRect.top - (3 + this.context.options.padding)}px`;
+            highlightStyle.left = `${targetRect.left - (3 + this.context.options.padding)}px`;
+            highlightStyle.width = `${targetRect.width + 2 + this.context.options.padding * 2}px`;
+            highlightStyle.height = `${targetRect.height + 2 + this.context.options.padding * 2}px`;
+            setStyle(highlight, highlightStyle);
+          }
+          positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
+        } else if (isTargetValid(this.target)) {
           if (this.overlay && this.highlight) {
             const targetRect = getBoundingClientRect$1(this.target, this.context._options.root);
             highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
@@ -2554,16 +2600,21 @@
             });
           };
           const animationspeed = clamp$1(this.context.options.animationspeed, 120, 1000);
-          console.error("Before isTargetValid", this.target);
-          if (isTargetValid(this.target)) {
-            this._scrollCancel = scrollIntoView(this.target, {
+          // xyzzy100 - 
+          let xtarget = this.target;
+          console.error("Before isTargetValid", xtarget, "animationspeed=", animationspeed);
+          if (isTargetFixedPosition(this.target) && isTargetVisible(this.target)) ; else if (isTargetValid(xtarget)) {
+            this._scrollCancel = scrollIntoView(xtarget, {
               time: animationspeed,
               cancellable: false,
               align: {
                 top: 0.5,
                 left: 0.5
               }
-            });
+            }, () => {
+              console.log("%cscroll done", "backgrond: green; color:white;");
+            } // PJS Added.
+            );
           }
           this._timerHandler = setTimeout(show, animationspeed * 3);
           return true;
@@ -2981,6 +3032,7 @@
         this._steps = this._steps.sort((a, b) => a.index - b.index);
         this._steps[0].first = true;
         this._steps[this.length - 1].last = true;
+        console.log("steps=", this._steps); // error, "target" is note set at this point, hence false.					xyzzy - error at this point, target not set.
       }
       reset() {
         if (this._active) this.stop();
@@ -2999,6 +3051,7 @@
           if (!this._active) {
             u(this._options.root).addClass("__guided-tour-active");
             this.init();
+            console.log("in 'start()', before attacth is called, this._steps=", this._steps);
             this._overlay.attach(this._shadowRoot);
             this._steps.forEach(step => step.attach(this._shadowRoot));
             this._current = step;

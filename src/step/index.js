@@ -9,6 +9,8 @@ import {
 	getDataContents,
 	getBoundingClientRect,
 	isTargetValid,
+	isTargetFixedPosition,		// PJS
+	isTargetVisible,			// PJS
 	getViewportRect,
 	setStyle,
 	assert,
@@ -159,21 +161,32 @@ export default class Step {
 			} else tooltipinner.append(arrow).append(container);
 			tooltip.append(tooltipinner);
 			this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
-			// xyzzy - this point
-			if (this.overlay && isTargetValid(this.target)) {
+			// console.warn ( "this.target = ", this.target );
+			// xyzzy100 - this point - if fixed and visible, then ... do it...
+			// export function isTargetFixedPosition(target) {
+			// export function isTargetVisible(target) {
+			if ( this.overlay && isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) {
+				const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
+				this.container.append(highlight).append(tooltip);
+			} else if (this.overlay && isTargetValid(this.target)) {
 				const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
 				this.container.append(highlight).append(tooltip);
 			} else this.container.append(tooltip);
 		}
+		// console.warn ( "return this.container from 'get el', ", this.container);
 		return this.container;
 	}
 	get target() {
+		// I think the error is at this piont, this._selector = '#driver-footer', u()... is NULL, no find.
+		// console.warn ( ">>>>>>  in get target(), this._selector = ", this._selector, " u(...)=", u(this._selector), " .first()=", u(this._selector).first() );
 		return this._target || this._selector && u(this._selector).first();
 	}
 	set target(target) {
+		// console.warn ( "set of target to, ", target );
 		this._target = target;
 	}
 	constructor(step, context) {
+		// console.warn ( "step = ", step );
 		this.active = false;
 		this.first = false;
 		this.last = false;
@@ -193,6 +206,7 @@ export default class Step {
 			data = step;
 			this._selector = step.selector;
 		} else {
+			// console.error ( " !!!!!!!!!!!!!!!!!!!!!!!! seting of this.target = step !!!!!!!!!!!!!!!!!! Before set of target", step );
 			this.target = step;
 			data = getDataContents(u(step).data("tour"));
 		}
@@ -218,6 +232,10 @@ export default class Step {
 		this.image = data.image;
 		this.width = data.width;
 		this.height = data.height;
+		this.udata = {};									// add user data, udata
+		if ( data.hasOwnProperty("udata") ) {
+			this.udata = data.udata;
+		}
 		this.layout = data.layout || "vertical";
 		this.placement = data.placement || "bottom";
 		this.overlay = data.overlay !== false;
@@ -246,6 +264,7 @@ export default class Step {
 		// this.adjust = this.adjust.bind(this);
 	}
 	attach(root) {
+		// console.warn ( "in attach() before this.el, error may already have occured.   this.target=", this.target);
 		u(root).append(this.el);
 	}
 	remove() {
@@ -263,7 +282,20 @@ export default class Step {
 			height: 0
 		};
 
-		if (isTargetValid(this.target)) {
+		// xyzzy100 - 
+		if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) {
+			if (this.overlay && this.highlight) {
+				// See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+				// offsetParent is useful because offsetTop and offsetLeft are relative to its padding edge., so take a guess at padding size...
+				const targetRect = getBoundingClientRect(this.target, this.context._options.root);
+				highlightStyle.top = `${targetRect.top - (3+this.context.options.padding)}px`;
+				highlightStyle.left = `${targetRect.left - (3+this.context.options.padding)}px`;
+				highlightStyle.width = `${targetRect.width + 2 + this.context.options.padding * 2}px`;
+				highlightStyle.height = `${targetRect.height + 2 + this.context.options.padding * 2}px`;
+				setStyle(highlight, highlightStyle);
+			}
+			positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
+		} else if (isTargetValid(this.target)) {
 			if (this.overlay && this.highlight) {
 				const targetRect = getBoundingClientRect(this.target, this.context._options.root);
 				highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
@@ -304,16 +336,21 @@ export default class Step {
 				});
 			};
 			const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
-			console.error ( "Before isTargetValid", this.target );
-			if (isTargetValid(this.target)) {
-				this._scrollCancel = scrollIntoView(this.target, {
+			// xyzzy100 - 
+			let xtarget = this.target;
+			console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
+			if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) { 				// possibly, if ( isFixedPostion(this.target) && isVisible(this.target) ), ... do nothing, else
+			} else if (isTargetValid(xtarget)) {
+				this._scrollCancel = scrollIntoView(xtarget, {
 					time: animationspeed,
 					cancellable: false,
 					align: {
 						top: 0.5,
 						left: 0.5
 					}
-				});
+				}
+				, () => { console.log ( "%cscroll done", "backgrond: green; color:white;" ); }												// PJS Added.
+				);
 			}
 			this._timerHandler = setTimeout(show, animationspeed * 3);
 			return true;

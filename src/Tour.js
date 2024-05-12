@@ -264,6 +264,7 @@ export default class Tour {
 		this._steps = this._steps.sort((a, b) => a.index - b.index);
 		this._steps[0].first = true;
 		this._steps[this.length - 1].last = true;
+		console.log ( "steps=", this._steps );	// error, "target" is note set at this point, hence false.					xyzzy - error at this point, target not set.
 	}
 	reset() {
 		if (this._active) this.stop();
@@ -281,6 +282,7 @@ export default class Tour {
 			if (!this._active) {
 				u(this._options.root).addClass("__guided-tour-active");
 				this.init();
+				console.log ( "in 'start()', before attacth is called, this._steps=", this._steps );
 				this._overlay.attach(this._shadowRoot);
 				this._steps.forEach((step) => step.attach(this._shadowRoot));
 				this._current = step;

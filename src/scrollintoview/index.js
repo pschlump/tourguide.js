@@ -225,7 +225,7 @@ function scrollIntoView(target, settings, callback) {
         return;
     }
 
-	console.error ( "target=", target );
+	// console.error ( "target=", target );
 
     if(typeof settings === 'function'){
         callback = settings;

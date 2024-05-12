@@ -338,7 +338,7 @@ export default class Step {
 			const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
 			// xyzzy100 - 
 			let xtarget = this.target;
-			console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
+			// console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
 			if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) { 				// possibly, if ( isFixedPostion(this.target) && isVisible(this.target) ), ... do nothing, else
 			} else if (isTargetValid(xtarget)) {
 				this._scrollCancel = scrollIntoView(xtarget, {

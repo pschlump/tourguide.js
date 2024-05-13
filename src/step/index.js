@@ -186,7 +186,7 @@ export default class Step {
 		this._target = target;
 	}
 	constructor(step, context) {
-		// console.warn ( "step = ", step );
+		// console.warn ( "step = ", step );			// have udata
 		this.active = false;
 		this.first = false;
 		this.last = false;
@@ -232,9 +232,13 @@ export default class Step {
 		this.image = data.image;
 		this.width = data.width;
 		this.height = data.height;
-		this.udata = {};									// add user data, udata
-		if ( data.hasOwnProperty("udata") ) {
+		// this.udata = {};									// add user data, udata
+		// console.log ( "data =", data );
+		// if ( data.hasOwnProperty("udata") ) {
+		if ( data.udata ) {
 			this.udata = data.udata;
+		} else {
+			this.udata = {};
 		}
 		this.layout = data.layout || "vertical";
 		this.placement = data.placement || "bottom";
@@ -349,7 +353,7 @@ export default class Step {
 						left: 0.5
 					}
 				}
-				, () => { console.log ( "%cscroll done", "backgrond: green; color:white;" ); }												// PJS Added.
+				, () => { console.log ( ">>> scroll done <<<" ); }												// PJS Added.
 				);
 			}
 			this._timerHandler = setTimeout(show, animationspeed * 3);

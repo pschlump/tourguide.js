@@ -145,10 +145,7 @@ export default class Tour {
 		this._stepsSrc = StepsSource.DOM;
 		this._ready = false;
 		this._initialposition = null;
-		if (
-			typeof this._options.steps === "object" &&
-			Array.isArray(this._options.steps)
-		) {
+		if ( typeof this._options.steps === "object" && Array.isArray(this._options.steps)) {
 			this._stepsSrc = StepsSource.JSON;
 			this._steps = this._options.steps.map((o, index) => new Step({...o, step: o.step || index}, this));
 			this._ready = true;

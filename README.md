@@ -2,6 +2,12 @@
 
 Original: (https://github.com/LikaloLLC/tourguide.js)[https://github.com/LikaloLLC/tourguide.js]
 
+A new version number v2.0.0 has been added as this is branching away from the original.
+
+Some of the below will take you to the original libraries links.   Also an underlying library, `scroll-into-view` has
+been added directly to this.  It is in `./src/scrollintoview` and is MIT licensed.  See the `./src/LICENSE.mit`
+file.  It has been lightly modified to work with this library.
+
 ######  Simple, lightweight library for creating guided tours for your web, apps and more.
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]

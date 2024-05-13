@@ -1,6 +1,6 @@
 {
   "name": "tourguidejs",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "src": "src/Tour.js",
   "main": "tourguide.js",
   "module": "tourguide.esm.js",
@@ -13,7 +13,7 @@
     "tourguide.*"
   ],
   "author": {
-    "name": "Likalo LLC",
+    "name": "Likalo LLC, Philip Schlump",
     "url": "https://likalo.com/"
   },
   "keywords": [
@@ -28,11 +28,11 @@
   "license": "BSD 3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LikaloLLC/tourguide.js"
+    "url": "https://github.com/pschlump/tourguide.js"
   },
   "engines": {
-    "npm": ">=3.0.0",
-    "node": ">=6.0.0"
+    "npm": ">=10.0.0",
+    "node": ">=22.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",

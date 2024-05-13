@@ -2919,6 +2919,8 @@
           src: null,
           restoreinitialposition: true,
           preloadimages: false,
+          closeOnEsc: false,
+          closeOnBackgroundClick: false,
           request: {
             options: {
               mode: "cors",
@@ -2934,12 +2936,15 @@
           onStart: () => {},
           onStop: () => {},
           onComplete: () => {},
+          onBeforeStep: () => {},
           onStep: () => {},
           onAction: () => {}
         }, options, {
           style: setAutoColors(defaultStyle, options.colors || options.style)
         });
-        // console.error ( "echo of onStep", this._options.onStep );
+        console.error("echo of options", this._options);
+        console.log("echo of options, closeOnEsc", this._options.closeOnEsc);
+        console.log("echo of options, closeOnBackgroundClick", this._options.closeOnBackgroundClick);
         this._overlay = null;
         this._steps = [];
         this._current = 0;
@@ -2983,6 +2988,22 @@
         this._overlayElement.classList.add("guided-tour-catch-click");
         this._overlayElement.style = `height:${h}px; width:${w}px;`;
         u(this._shadowRoot).append(this._overlayElement);
+        this._overlayElement.addEventListener("wheel", event => {
+          event.preventDefault();
+          console.log("Catch wheel scroll event");
+          return false;
+        });
+        // xyzzy
+        // catch click or 'Esc' char on background.
+        if (this._options.closeOnBackgroundClick) {
+          console.warn("apply click handler to div");
+          this._overlayElement.addEventListener("click", event => {
+            event.preventDefault();
+            console.log("Catch click event");
+            this.stop();
+            return false;
+          });
+        }
         this.start = this.start.bind(this);
         this.next = this.next.bind(this);
         this.previous = this.previous.bind(this);
@@ -3038,7 +3059,6 @@
         this._steps = this._steps.sort((a, b) => a.index - b.index);
         this._steps[0].first = true;
         this._steps[this.length - 1].last = true;
-        // console.log ( "steps=", this._steps );	// error, "target" is note set at this point, hence false.					xyzzy - error at this point, target not set.
       }
       reset() {
         if (this._active) this.stop();
@@ -3116,6 +3136,7 @@
       go(step, type) {
         if (this._active && this._current !== step) {
           this.currentstep.hide();
+          this._options.onBeforeStep(this.currentstep, type);
           this._current = clamp$1(step, 0, this.length - 1);
           this.currentstep.show();
           this._options.onStep(this.currentstep, type);

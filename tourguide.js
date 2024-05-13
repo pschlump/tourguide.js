@@ -2455,7 +2455,12 @@ var Tourguide = (function () {
           } else if (this.overlay && isTargetValid(this.target)) {
             const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
             this.container.append(highlight).append(tooltip);
-          } else this.container.append(tooltip);
+          } else {
+            const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
+            this.container.append(highlight).append(tooltip);
+            // PJS xyzzy102
+            // this.container.append(tooltip);
+          }
         }
         // console.warn ( "return this.container from 'get el', ", this.container);
         return this.container;
@@ -2595,7 +2600,8 @@ var Tourguide = (function () {
         if (!this.active) {
           const show = () => {
             this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-            this.context._overlay.hide();
+            // xyzzy101
+            // this.context._overlay.hide();
             this.position();
             this.active = true;
             this.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
@@ -2683,6 +2689,7 @@ var Tourguide = (function () {
       }
       hide() {
         if (this.active) {
+          console.error("deactivating it -- the overlay");
           this.el.removeClass("active");
           this.active = false;
           return true;

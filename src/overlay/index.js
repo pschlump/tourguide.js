@@ -29,6 +29,7 @@ export default class Overlay {
 	}
 	hide() {
 		if (this.active) {
+			console.error ( "deactivating it -- the overlay" );
 			this.el.removeClass("active");
 			this.active = false;
 			return true;

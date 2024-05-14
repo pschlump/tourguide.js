@@ -141,9 +141,9 @@ export default class Tour {
 			}
 		);
 
-		console.error ( "echo of options", this._options );
-		console.log ( "echo of options, closeOnEsc", this._options.closeOnEsc );
-		console.log ( "echo of options, closeOnBackgroundClick", this._options.closeOnBackgroundClick );
+		//console.error ( "echo of options", this._options );
+		//console.log ( "echo of options, closeOnEsc", this._options.closeOnEsc );
+		//console.log ( "echo of options, closeOnBackgroundClick", this._options.closeOnBackgroundClick );
 
 		this._overlay = null;
 		this._steps = [];
@@ -190,16 +190,16 @@ export default class Tour {
 
 		this._overlayElement.addEventListener("wheel", (event) => {
 			event.preventDefault();
-			console.log ( "Catch wheel scroll event" );
+			// console.log ( "Catch wheel scroll event" );
 			return false;
 		});
 		// xyzzy
 		// catch click or 'Esc' char on background.
 		if ( this._options.closeOnBackgroundClick ) {
-			console.warn ( "apply click handler to div" );
+			// console.warn ( "apply click handler to div" );
 			this._overlayElement.addEventListener("click", (event) => {
 				event.preventDefault();
-				console.log ( "Catch click event" );
+				// console.log ( "Catch click event" );
 				this.stop();
 				return false;
 			});

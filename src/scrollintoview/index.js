@@ -221,7 +221,7 @@ function findParentElement(el) {
 function scrollIntoView(target, settings, callback) {
 
     if(!target) {
-		console.error ( "target not defined, early return!!!!!" );
+		// console.error ( "target not defined, early return!!!!!" );
         return;
     }
 
@@ -254,7 +254,7 @@ function scrollIntoView(target, settings, callback) {
     var isScrollable = settings.isScrollable;
 
     if(settings.debug) {
-        console.log('About to scroll to', target)
+        // console.log('About to scroll to', target)
 
         if(!parent) {
             console.error('Target did not have a parent, is it mounted in the DOM?')

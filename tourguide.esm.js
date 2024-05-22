@@ -193,7 +193,7 @@ function findParentElement(el) {
 // module.exports = function(target, settings, callback) {
 function scrollIntoView(target, settings, callback) {
   if (!target) {
-    console.error("target not defined, early return!!!!!");
+    // console.error ( "target not defined, early return!!!!!" );
     return;
   }
 
@@ -222,7 +222,8 @@ function scrollIntoView(target, settings, callback) {
   var validTarget = settings.validTarget || defaultValidTarget;
   var isScrollable = settings.isScrollable;
   if (settings.debug) {
-    console.log('About to scroll to', target);
+    // console.log('About to scroll to', target)
+
     if (!parent) {
       console.error('Target did not have a parent, is it mounted in the DOM?');
     }
@@ -2542,6 +2543,7 @@ class Step {
     this.el.remove();
   }
   position() {
+    // console.warn ( "postion()" );
     const view = getViewportRect$1(this.context._options.root);
     const tooltip = this.tooltip;
     const highlight = this.highlight;
@@ -2555,6 +2557,7 @@ class Step {
     // xyzzy100 - 
     if (isTargetFixedPosition(this.target) && isTargetVisible(this.target)) {
       if (this.overlay && this.highlight) {
+        // console.warn ( "Case 1 - no check for in view, fixed and isTargetVisible()==true" );
         // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
         // offsetParent is useful because offsetTop and offsetLeft are relative to its padding edge., so take a guess at padding size...
         const targetRect = getBoundingClientRect$1(this.target, this.context._options.root);
@@ -2566,6 +2569,7 @@ class Step {
       }
       positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
     } else if (isTargetValid(this.target)) {
+      // console.warn ( "Case 2" );
       if (this.overlay && this.highlight) {
         const targetRect = getBoundingClientRect$1(this.target, this.context._options.root);
         highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
@@ -2576,6 +2580,7 @@ class Step {
       }
       positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
     } else {
+      // console.warn ( "Case 3" );
       if (this.overlay && this.highlight) setStyle(highlight, highlightStyle);
       const tootipStyle = {};
       const tooltipRect = getBoundingClientRect$1(tooltip, this.context._options.root);
@@ -2593,9 +2598,12 @@ class Step {
     if (this._scrollCancel) this._scrollCancel();
   }
   show() {
+    // console.log ( "in show()/340" );
     this.cancel();
     if (!this.active) {
+      // console.log ( "A/343" );
       const show = () => {
+        // console.log ( "A/345" );
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         // xyzzy101
         // this.context._overlay.hide();
@@ -2606,10 +2614,12 @@ class Step {
         });
       };
       const animationspeed = clamp$1(this.context.options.animationspeed, 120, 1000);
-      // xyzzy100 - 
+      // console.log ( "A/356" );
+
       let xtarget = this.target;
       // console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
       if (isTargetFixedPosition(this.target) && isTargetVisible(this.target)) ; else if (isTargetValid(xtarget)) {
+        // console.warn ( "Calling scrollIntoView()" );
         this._scrollCancel = scrollIntoView(xtarget, {
           time: animationspeed,
           cancellable: false,
@@ -2622,7 +2632,9 @@ class Step {
         } // PJS Added.
         );
       }
+      // console.log ( "A/375" );
       this._timerHandler = setTimeout(show, animationspeed * 3);
+      // console.log ( "A/377" );
       return true;
     }
     return false;
@@ -2686,7 +2698,7 @@ class Overlay {
   }
   hide() {
     if (this.active) {
-      console.error("deactivating it -- the overlay");
+      // console.error ( "deactivating it -- the overlay" );
       this.el.removeClass("active");
       this.active = false;
       return true;
@@ -2943,9 +2955,11 @@ class Tour {
     }, options, {
       style: setAutoColors(defaultStyle, options.colors || options.style)
     });
-    console.error("echo of options", this._options);
-    console.log("echo of options, closeOnEsc", this._options.closeOnEsc);
-    console.log("echo of options, closeOnBackgroundClick", this._options.closeOnBackgroundClick);
+
+    //console.error ( "echo of options", this._options );
+    //console.log ( "echo of options, closeOnEsc", this._options.closeOnEsc );
+    //console.log ( "echo of options, closeOnBackgroundClick", this._options.closeOnBackgroundClick );
+
     this._overlay = null;
     this._steps = [];
     this._current = 0;
@@ -2991,16 +3005,15 @@ class Tour {
     u(this._shadowRoot).append(this._overlayElement);
     this._overlayElement.addEventListener("wheel", event => {
       event.preventDefault();
-      console.log("Catch wheel scroll event");
+      // console.log ( "Catch wheel scroll event" );
       return false;
     });
-    // xyzzy
     // catch click or 'Esc' char on background.
     if (this._options.closeOnBackgroundClick) {
-      console.warn("apply click handler to div");
+      // console.warn ( "apply click handler to div" );
       this._overlayElement.addEventListener("click", event => {
         event.preventDefault();
-        console.log("Catch click event");
+        // console.log ( "Catch click event" );
         this.stop();
         return false;
       });
@@ -3139,8 +3152,8 @@ class Tour {
       this.currentstep.hide();
       this._options.onBeforeStep(this.currentstep, type);
       this._current = clamp$1(step, 0, this.length - 1);
-      this.currentstep.show();
       this._options.onStep(this.currentstep, type);
+      this.currentstep.show();
     }
   }
   stop() {

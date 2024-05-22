@@ -193,7 +193,6 @@ export default class Tour {
 			// console.log ( "Catch wheel scroll event" );
 			return false;
 		});
-		// xyzzy
 		// catch click or 'Esc' char on background.
 		if ( this._options.closeOnBackgroundClick ) {
 			// console.warn ( "apply click handler to div" );
@@ -363,8 +362,8 @@ export default class Tour {
 			this.currentstep.hide();
 			this._options.onBeforeStep(this.currentstep, type);
 			this._current = clamp(step, 0, this.length - 1);
-			this.currentstep.show();
 			this._options.onStep(this.currentstep, type);
+			this.currentstep.show();
 		}
 	}
 	stop() {

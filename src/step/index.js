@@ -281,6 +281,7 @@ export default class Step {
 		this.el.remove();
 	}
 	position() {
+		// console.warn ( "postion()" );
 		const view = getViewportRect(this.context._options.root);
 		const tooltip = this.tooltip;
 		const highlight = this.highlight;
@@ -294,6 +295,7 @@ export default class Step {
 		// xyzzy100 - 
 		if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) {
 			if (this.overlay && this.highlight) {
+				// console.warn ( "Case 1 - no check for in view, fixed and isTargetVisible()==true" );
 				// See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
 				// offsetParent is useful because offsetTop and offsetLeft are relative to its padding edge., so take a guess at padding size...
 				const targetRect = getBoundingClientRect(this.target, this.context._options.root);
@@ -305,6 +307,7 @@ export default class Step {
 			}
 			positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
 		} else if (isTargetValid(this.target)) {
+			// console.warn ( "Case 2" );
 			if (this.overlay && this.highlight) {
 				const targetRect = getBoundingClientRect(this.target, this.context._options.root);
 				highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
@@ -315,6 +318,7 @@ export default class Step {
 			}
 			positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
 		} else {
+			// console.warn ( "Case 3" );
 			if (this.overlay && this.highlight) setStyle(highlight, highlightStyle);
 
 			const tootipStyle = {};
@@ -333,9 +337,12 @@ export default class Step {
 		if (this._scrollCancel) this._scrollCancel();
 	}
 	show() {
+		// console.log ( "in show()/340" );
 		this.cancel();
 		if (!this.active) {
+			// console.log ( "A/343" );
 			const show = () => {
+				// console.log ( "A/345" );
 				this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
 				// xyzzy101
 				// this.context._overlay.hide();
@@ -346,11 +353,14 @@ export default class Step {
 				});
 			};
 			const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
-			// xyzzy100 - 
+			// console.log ( "A/356" );
+
 			let xtarget = this.target;
 			// console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
-			if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) { 				// possibly, if ( isFixedPostion(this.target) && isVisible(this.target) ), ... do nothing, else
+			if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) { 						// PJS Added.
+				// console.warn ( "fixed postion - and visible" );
 			} else if (isTargetValid(xtarget)) {
+				// console.warn ( "Calling scrollIntoView()" );
 				this._scrollCancel = scrollIntoView(xtarget, {
 					time: animationspeed,
 					cancellable: false,
@@ -362,7 +372,9 @@ export default class Step {
 				, () => { console.log ( ">>> scroll done <<<" ); }												// PJS Added.
 				);
 			}
+			// console.log ( "A/375" );
 			this._timerHandler = setTimeout(show, animationspeed * 3);
+			// console.log ( "A/377" );
 			return true;
 		}
 		return false;

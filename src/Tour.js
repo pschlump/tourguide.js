@@ -362,8 +362,8 @@ export default class Tour {
 			this.currentstep.hide();
 			this._options.onBeforeStep(this.currentstep, type);
 			this._current = clamp(step, 0, this.length - 1);
-			this._options.onStep(this.currentstep, type);
 			this.currentstep.show();
+			this._options.onStep(this.currentstep, type);
 		}
 	}
 	stop() {

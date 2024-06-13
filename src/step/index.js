@@ -14,6 +14,7 @@ import {
 	getViewportRect,
 	setStyle,
 	assert,
+	scrollIntoView2,			// PJS New
 	// getStyle,
 	// parseNumber,
 } from "../utils";
@@ -337,7 +338,7 @@ export default class Step {
 		if (this._scrollCancel) this._scrollCancel();
 	}
 	show() {
-		// console.log ( "in show()/340" );
+		// console.log ( "%cin show()/340", "color:magenta;font-size:15px;font-weight:700;", this, this.index );
 		this.cancel();
 		if (!this.active) {
 			// console.log ( "A/343" );
@@ -354,8 +355,8 @@ export default class Step {
 			};
 			const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
 			// console.log ( "A/356" );
-
 			let xtarget = this.target;
+			// console.log ( `isTargetValid()=${isTargetValid(xtarget)} => xtarget&&target.offsetParent --> xtarget=`, xtarget, ` A/358` );
 			// console.error ( "Before isTargetValid", xtarget, "animationspeed=", animationspeed );
 			if ( isTargetFixedPosition(this.target) && isTargetVisible(this.target) ) { 						// PJS Added.
 				// console.warn ( "fixed postion - and visible" );
@@ -371,10 +372,19 @@ export default class Step {
 				}
 				, () => { console.log ( ">>> scroll done <<<" ); }												// PJS Added.
 				);
+			} else {
+				// console.log ( "A/375" , this._selector , this._selector.slice(1));
+				// let x = document.getElementsByClassName(this._selector.slice(1))		; console.log(x); // remove the '.' from the beginning
+				// window.scrollIntoView2(this._selector);
+				scrollIntoView2(this._selector);
+				//if ( x && x.length ) {
+				//	console.log ( "A/378 -- just before scrollIntoView()", x );
+				//	x[0].scrollIntoView();
+				//}
 			}
-			// console.log ( "A/375" );
+			// console.log ( "A/382" );
 			this._timerHandler = setTimeout(show, animationspeed * 3);
-			// console.log ( "A/377" );
+			// console.log ( "A/384" );
 			return true;
 		}
 		return false;

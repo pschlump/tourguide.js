@@ -54,6 +54,36 @@ export function isTargetVisible(target) {
 	return target && target.checkVisibility()
 }
 
+// PJS new xyzzy100
+/**
+ * For items that are on page but do not have a .offsetParent, this is the way to scrolll them into view.
+ * The first selected item will be used.
+ * PJS new.
+ * @param {string} a selector, '.class', '#item', or 'name' that will pick the item to scroll into view.
+ */
+export function scrollIntoView2(s) {
+	// console.error ( "scrollIntoView2: s=", s );
+	var x;
+	if ( s.substr(0,1) == "." ) {
+		x = document.getElementsByClassName(s.substr(1))
+		// console.log ( "by class name =", x );
+	} else if ( s.substr(0,1) == "#" ) {
+		let y = document.getElementById(s.substr(1));
+		x = ( y ) ? [ y ] : [];
+		// console.log ( "by id name =", x );
+	} else {
+		x = document.getElementsByName(s)
+		// console.log ( "by name name =", x );
+	}
+	if ( x && x.length ) {
+		// console.log ( `Calling scrollIntoView, for ${s}` )
+		setTimeout( function() {
+			x[0].scrollIntoView();
+		}, 15 );
+	}
+}
+
+
 /**
  * getting bounding client rect and additional properties
  * @param {Element | string} element target element or selector

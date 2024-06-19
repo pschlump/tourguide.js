@@ -210,7 +210,7 @@ function findParentElement(el) {
 
     if (el.getRootNode) {
         var parent = el.getRootNode()
-        if(parent.nodeType === 11) {	// Node.DOCUMENT_FRAGMENT_NODE (11), see: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+        if(parent.nodeType === 11) {    // Node.DOCUMENT_FRAGMENT_NODE (11), see: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
             return parent.host;
         }
     }
@@ -221,11 +221,11 @@ function findParentElement(el) {
 function scrollIntoView(target, settings, callback) {
 
     if(!target) {
-		// console.error ( "target not defined, early return!!!!!" );
+        // console.error ( "target not defined, early return!!!!!" );
         return;
     }
 
-	console.error ( "scrollIntoView:228: target=", target );
+    // console.error ( "scrollIntoView:228: target=", target );
 
     if(typeof settings === 'function') {
         callback = settings;

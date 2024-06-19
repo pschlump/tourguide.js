@@ -199,7 +199,9 @@ var Tourguide = (function () {
         // console.error ( "target not defined, early return!!!!!" );
         return;
       }
-      console.error("scrollIntoView:228: target=", target);
+
+      // console.error ( "scrollIntoView:228: target=", target );
+
       if (typeof settings === 'function') {
         callback = settings;
         settings = null;
@@ -794,7 +796,8 @@ var Tourguide = (function () {
       } = state;
       const {
         boundary = 'clippingAncestors',
-        rootBoundary = 'viewport',
+        rootBoundary = 'document',
+        // PJS Mod : orig 			 rootBoundary = 'viewport',		
         elementContext = 'floating',
         altBoundary = false,
         padding = 0
@@ -828,12 +831,20 @@ var Tourguide = (function () {
         offsetParent,
         strategy
       }) : rect);
-      return {
+      let rv = {
         top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
         bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
         left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
         right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
       };
+
+      //console.error("%cPJS - input x=",  x, " y=", y, " platform=", platform, " rects=", rects, " elements=", elements, " strategy=", strategy );
+      //console.log("     clippingClientRect =", clippingClientRect);
+      //console.log("     elementClientRect = ", elementClientRect);
+      //console.log("     paddingObject = ",  paddingObject);
+      //console.log("     output=", rv);
+
+      return rv;
     }
 
     /**
@@ -1604,16 +1615,16 @@ var Tourguide = (function () {
             widthSide = side;
             heightSide = alignment === 'end' ? 'top' : 'bottom';
           }
-          const overflowAvailableHeight = height - overflow[heightSide];
-          const overflowAvailableWidth = width - overflow[widthSide];
+          const maximumClippingHeight = height - overflow.top - overflow.bottom;
+          const maximumClippingWidth = width - overflow.left - overflow.right;
+          const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
+          const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
           const noShift = !state.middlewareData.shift;
           let availableHeight = overflowAvailableHeight;
           let availableWidth = overflowAvailableWidth;
           if (isYAxis) {
-            const maximumClippingWidth = width - overflow.left - overflow.right;
             availableWidth = alignment || noShift ? min(overflowAvailableWidth, maximumClippingWidth) : maximumClippingWidth;
           } else {
-            const maximumClippingHeight = height - overflow.top - overflow.bottom;
             availableHeight = alignment || noShift ? min(overflowAvailableHeight, maximumClippingHeight) : maximumClippingHeight;
           }
           if (noShift && !alignment) {
@@ -2316,6 +2327,14 @@ var Tourguide = (function () {
 
     var e={"":["<em>","</em>"],_:["<strong>","</strong>"],"*":["<strong>","</strong>"],"~":["<s>","</s>"],"\n":["<br />"]," ":["<br />"],"-":["<hr />"]};function n(e){return e.replace(RegExp("^"+(e.match(/^(\t| )+/)||"")[0],"gm"),"")}function r(e){return (e+"").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function t(a,c){var o,l,g,s,p,u=/((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm,m=[],h="",i=c||{},d=0;function f(n){var r=e[n[1]||""],t=m[m.length-1]==n;return r?r[1]?(t?m.pop():m.push(n),r[0|t]):r[0]:n}function $(){for(var e="";m.length;)e+=f(m[m.length-1]);return e}for(a=a.replace(/^\[(.+?)\]:\s*(.+)$/gm,function(e,n,r){return i[n.toLowerCase()]=r,""}).replace(/^\n+|\n+$/g,"");g=u.exec(a);)l=a.substring(d,g.index),d=u.lastIndex,o=g[0],l.match(/[^\\](\\\\)*\\$/)||((p=g[3]||g[4])?o='<pre class="code '+(g[4]?"poetry":g[2].toLowerCase())+'"><code'+(g[2]?' class="language-'+g[2].toLowerCase()+'"':"")+">"+n(r(p).replace(/^\n+|\n+$/g,""))+"</code></pre>":(p=g[6])?(p.match(/\./)&&(g[5]=g[5].replace(/^\d+/gm,"")),s=t(n(g[5].replace(/^\s*[>*+.-]/gm,""))),">"==p?p="blockquote":(p=p.match(/\./)?"ol":"ul",s=s.replace(/^(.*)(\n|$)/gm,"<li>$1</li>")),o="<"+p+">"+s+"</"+p+">"):g[8]?o='<img src="'+r(g[8])+'" alt="'+r(g[7])+'">':g[10]?(h=h.replace("<a>",'<a href="'+r(g[11]||i[l.toLowerCase()])+'">'),o=$()+"</a>"):g[9]?o="<a>":g[12]||g[14]?o="<"+(p="h"+(g[14]?g[14].length:g[13]>"="?1:2))+">"+t(g[12]||g[15],i)+"</"+p+">":g[16]?o="<code>"+r(g[16])+"</code>":(g[17]||g[1])&&(o=f(g[17]||"--"))),h+=l,h+=o;return (h+a.substring(d)+$()).replace(/^\n+|\n+$/g,"")}
 
+    /*
+    export function clamp(number, min, max) {
+    	min = isNaN(min) ? number : min;
+    	max = isNaN(max) ? number : max;
+    	return Math.max(min, Math.min(number, max));
+    }
+    */
+
     const keepinview = _ref => {
       let {
         padding = 0
@@ -2330,9 +2349,14 @@ var Tourguide = (function () {
             middlewareData,
             platform
           } = _ref2;
+          // console.error ( `PJS/keepinview x=${x} y=${y}`, "rects=", rects, "middlewareData=", middlewareData, "platform=", platform );
           const documentDimentions = platform.getDimensions(document.body);
+          // console.log ( "     documentDimentions=", documentDimentions);
+          // console.log ( "     documentDimentions.height=", documentDimentions.height);
+          // console.log ( "     max=", documentDimentions.height - rects.floating.height - padding,  "*** this is for y ***");
           const _x = clamp$1(x, padding, documentDimentions.width - rects.floating.width - padding);
           const _y = clamp$1(y, padding, documentDimentions.height - rects.floating.height - padding);
+          // console.log ( `     new x/y are _x=${_x} _y=${_y}` );
           const dx = x - _x;
           const dy = y - _y;
           const {
@@ -2349,9 +2373,15 @@ var Tourguide = (function () {
         }
       };
     };
-    function positionTooltip(target, tooltipEl, arrowEl, context) {
+
+    // Called from
+    // 	1. Position
+    //	2. Show
+    // function positionTooltip(target, tooltipEl, arrowEl, context) {
+    function positionTooltip(target, tooltipEl, arrowEl) {
       //context._options.root
-      console.log(context);
+      // console.log ( '%cpostionTooltip: ', "font-size: 18px; color:blue;", context, target, tooltipEl, arrowEl );
+      // autoUpdate(target, tooltipEl, () => {
       computePosition(target, tooltipEl, {
         // placement: 'bottom-start',
         middleware: [
@@ -2382,6 +2412,9 @@ var Tourguide = (function () {
           middlewareData,
           placement
         } = _ref3;
+        // console.error ( `positionTooltip x=${x} y=${y}, middlewareData=`, middlewareData, " placement=", placement );
+        // let yy = y + scrollTop;
+        // console.log ( `aver adjustment, positionTooltip x=${x} yy=${yy}` );
         setStyle(tooltipEl, {
           left: `${x}px`,
           top: `${y}px`
@@ -2403,6 +2436,7 @@ var Tourguide = (function () {
           });
         }
       });
+      // });
     }
     class Step {
       get el() {
@@ -2601,11 +2635,15 @@ var Tourguide = (function () {
         } else if (isTargetValid(this.target)) {
           // console.warn ( "Case 2" );
           if (this.overlay && this.highlight) {
+            // var scrollLeft = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+            // var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
             const targetRect = getBoundingClientRect$1(this.target, this.context._options.root);
             highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
             highlightStyle.left = `${targetRect.left - this.context.options.padding}px`;
             highlightStyle.width = `${targetRect.width + this.context.options.padding * 2}px`;
             highlightStyle.height = `${targetRect.height + this.context.options.padding * 2}px`;
+            // console.warn ( "Case 2 - style to position box:", highlightStyle, " targetRect=", targetRect, ` scrollTop=${scrollTop} scrollLeft=${scrollLeft}` );
+            // console.warn ( "Case 2 - style to position box:", highlightStyle, " targetRect=", targetRect );
             setStyle(highlight, highlightStyle);
           }
           positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
@@ -2620,6 +2658,7 @@ var Tourguide = (function () {
           tootipStyle.right = "unset";
           tooltip.addClass("guided-tour-arrow-none");
           setStyle(tooltip, tootipStyle);
+          console.warn("Case 3  - style to set - ", tootipStyle);
           if (this.overlay) this.context._overlay.show();
         }
       }
@@ -2658,18 +2697,15 @@ var Tourguide = (function () {
                 left: 0.5
               }
             }, () => {
-              console.log(">>> scroll done <<<");
-            } // PJS Added.
-            );
+              // console.log ( ">>> scroll done <<<" );
+              // setTimeout( () => {
+              // console.log ( ">>> after <<<" );
+              // this.position();
+              // }, 250 );
+            });
           } else {
-            // console.log ( "A/375" , this._selector , this._selector.slice(1));
-            // let x = document.getElementsByClassName(this._selector.slice(1))		; console.log(x); // remove the '.' from the beginning
-            // window.scrollIntoView2(this._selector);
+            // console.error ( "A/375 %c -- our scrollIntoView2 --", "font-size:16px;color:red;" , this._selector , this._selector.slice(1));
             scrollIntoView2(this._selector);
-            //if ( x && x.length ) {
-            //	console.log ( "A/378 -- just before scrollIntoView()", x );
-            //	x[0].scrollIntoView();
-            //}
           }
           // console.log ( "A/382" );
           this._timerHandler = setTimeout(show, animationspeed * 3);

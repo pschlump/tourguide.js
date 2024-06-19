@@ -24,17 +24,31 @@ import {
 	arrow,
 	// shift,
 	// flip,
-	// detectOverflow
+	// detectOverflow,
+	// autoUpdate,
 	autoPlacement
 } from '@floating-ui/dom';
 import snarkdown from "snarkdown";
 
+/*
+export function clamp(number, min, max) {
+	min = isNaN(min) ? number : min;
+	max = isNaN(max) ? number : max;
+	return Math.max(min, Math.min(number, max));
+}
+*/
+
 const keepinview = ({ padding = 0 }) => ({
 	name: "keepinview",
 	fn({ x, y, rects, middlewareData, platform }) {
+		// console.error ( `PJS/keepinview x=${x} y=${y}`, "rects=", rects, "middlewareData=", middlewareData, "platform=", platform );
 		const documentDimentions = platform.getDimensions(document.body);
+		// console.log ( "     documentDimentions=", documentDimentions);
+		// console.log ( "     documentDimentions.height=", documentDimentions.height);
+		// console.log ( "     max=", documentDimentions.height - rects.floating.height - padding,  "*** this is for y ***");
 		const _x = clamp(x, padding, documentDimentions.width - rects.floating.width - padding);
 		const _y = clamp(y, padding, documentDimentions.height - rects.floating.height - padding);
+		// console.log ( `     new x/y are _x=${_x} _y=${_y}` );
 		const dx = x - _x;
 		const dy = y - _y;
 		const { arrow } = middlewareData;
@@ -46,56 +60,65 @@ const keepinview = ({ padding = 0 }) => ({
 	}
 });
 
-function positionTooltip(target, tooltipEl, arrowEl, context) {
+// Called from
+// 	1. Position
+//	2. Show
+// function positionTooltip(target, tooltipEl, arrowEl, context) {
+function positionTooltip(target, tooltipEl, arrowEl) {
 	//context._options.root
-	console.log ( context );
-	computePosition(
-		target, tooltipEl, {
-		// placement: 'bottom-start',
-		middleware: [
-			// flip(),
-			autoPlacement({
-				alignment: 'bottom-start',
-			}),
-			offset((props) => {
-				const side = props.placement.split("-")[0];
-				switch (side) {
-					case "top":
-						return 32;
-					case "left":
-					case "right":
-						return 24;
-					default: return 6;
-				}
-			}), arrow({
-				element: arrowEl,
-				padding: 8
-			}), keepinview({
-				padding: 24
-			})],
-	}
-	).then(({ x, y, middlewareData, placement }) => {
-		setStyle(tooltipEl, {
-			left: `${x}px`,
-			top: `${y}px`,
-		});
-		if (middlewareData.arrow) {
-			const side = placement.split("-")[0];
-			const staticSide = {
-				top: "bottom",
-				right: "left",
-				bottom: "top",
-				left: "right"
-			}[side];
-			setStyle(arrowEl, {
-				left: middlewareData.arrow.x != null ? `${middlewareData.arrow.x}px` : '',
-				top: middlewareData.arrow.y != null ? `${middlewareData.arrow.y}px` : '',
-				right: "",
-				bottom: "",
-				[staticSide]: `${-arrowEl.offsetWidth / 2}px`,
-			});
+	// console.log ( '%cpostionTooltip: ', "font-size: 18px; color:blue;", context, target, tooltipEl, arrowEl );
+	// autoUpdate(target, tooltipEl, () => {
+		computePosition(
+			target, tooltipEl, {
+			// placement: 'bottom-start',
+			middleware: [
+				// flip(),
+				autoPlacement({
+					alignment: 'bottom-start',
+				}),
+				offset((props) => {
+					const side = props.placement.split("-")[0];
+					switch (side) {
+						case "top":
+							return 32;
+						case "left":
+						case "right":
+							return 24;
+						default: return 6;
+					}
+				}), arrow({
+					element: arrowEl,
+					padding: 8
+				}), keepinview({
+					padding: 24
+				})],
 		}
-	});
+		).then(({ x, y, middlewareData, placement }) => {
+			// console.error ( `positionTooltip x=${x} y=${y}, middlewareData=`, middlewareData, " placement=", placement );
+			// let yy = y + scrollTop;
+			// console.log ( `aver adjustment, positionTooltip x=${x} yy=${yy}` );
+			setStyle(tooltipEl, {
+				left: `${x}px`,
+				top: `${y}px`,
+			});
+			if (middlewareData.arrow) {
+				const side = placement.split("-")[0];
+				const staticSide = {
+					top: "bottom",
+					right: "left",
+					bottom: "top",
+					left: "right"
+				}[side];
+				setStyle(arrowEl, {
+					left: middlewareData.arrow.x != null ? `${middlewareData.arrow.x}px` : '',
+					top: middlewareData.arrow.y != null ? `${middlewareData.arrow.y}px` : '',
+					right: "",
+					bottom: "",
+					[staticSide]: `${-arrowEl.offsetWidth / 2}px`,
+				});
+			}
+		});
+	// });
 }
 
 export default class Step {
@@ -310,11 +333,15 @@ export default class Step {
 		} else if (isTargetValid(this.target)) {
 			// console.warn ( "Case 2" );
 			if (this.overlay && this.highlight) {
+				// var scrollLeft = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+				// var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
 				const targetRect = getBoundingClientRect(this.target, this.context._options.root);
 				highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
 				highlightStyle.left = `${targetRect.left - this.context.options.padding}px`;
 				highlightStyle.width = `${targetRect.width + this.context.options.padding * 2}px`;
 				highlightStyle.height = `${targetRect.height + this.context.options.padding * 2}px`;
+				// console.warn ( "Case 2 - style to position box:", highlightStyle, " targetRect=", targetRect, ` scrollTop=${scrollTop} scrollLeft=${scrollLeft}` );
+				// console.warn ( "Case 2 - style to position box:", highlightStyle, " targetRect=", targetRect );
 				setStyle(highlight, highlightStyle);
 			}
 			positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
@@ -330,6 +357,7 @@ export default class Step {
 			tootipStyle.right = "unset";
 			tooltip.addClass("guided-tour-arrow-none");
 			setStyle(tooltip, tootipStyle);
+			console.warn ( "Case 3  - style to set - ", tootipStyle );
 			if (this.overlay) this.context._overlay.show();
 		}
 	}
@@ -370,17 +398,17 @@ export default class Step {
 						left: 0.5
 					}
 				}
-				, () => { console.log ( ">>> scroll done <<<" ); }												// PJS Added.
+				, () => {
+						// console.log ( ">>> scroll done <<<" );
+						// setTimeout( () => {
+							// console.log ( ">>> after <<<" );
+							// this.position();
+						// }, 250 );
+				}				
 				);
 			} else {
-				// console.log ( "A/375" , this._selector , this._selector.slice(1));
-				// let x = document.getElementsByClassName(this._selector.slice(1))		; console.log(x); // remove the '.' from the beginning
-				// window.scrollIntoView2(this._selector);
+				// console.error ( "A/375 %c -- our scrollIntoView2 --", "font-size:16px;color:red;" , this._selector , this._selector.slice(1));
 				scrollIntoView2(this._selector);
-				//if ( x && x.length ) {
-				//	console.log ( "A/378 -- just before scrollIntoView()", x );
-				//	x[0].scrollIntoView();
-				//}
 			}
 			// console.log ( "A/382" );
 			this._timerHandler = setTimeout(show, animationspeed * 3);
